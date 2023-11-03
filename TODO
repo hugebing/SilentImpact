@@ -1,0 +1,2 @@
+1. cd circuits && npm run buildsnark
+2. cd ../relay
