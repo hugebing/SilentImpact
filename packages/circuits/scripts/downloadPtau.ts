@@ -9,7 +9,7 @@ export async function downloadPtau() {
     const outDir = path.join(__dirname, '../zksnarkBuild')
     await fs.promises.mkdir(outDir, { recursive: true })
     const ptau = path.join(outDir, ptauName)
-
+    console.log(ptau);
     const ptauExists = await fs.promises.stat(ptau).catch(() => false)
     if (!ptauExists) {
         // download to a temporary file and then move it into place

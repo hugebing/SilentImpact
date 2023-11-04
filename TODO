@@ -1,2 +1,6 @@
 1. cd circuits && npm run buildsnark
-2. cd ../relay
+2. cd ../relay && npm run keys
+
+
+# 產生 log
+node dataProof_main_js/generate_witness.js dataProof_main_js/dataProof_main.wasm input.json witness.wtns

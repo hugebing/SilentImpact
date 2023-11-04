@@ -37,8 +37,14 @@ template DataProof(STATE_TREE_DEPTH, FIELD_COUNT, SUM_FIELD_COUNT, REPL_NONCE_BI
      /* 2. Check if user data more than given value */
     signal get[SUM_FIELD_COUNT];
     for (var x = 0; x < SUM_FIELD_COUNT; x++) {
-        get[x] <== GreaterEqThan(252)([data[x], value[x]]);
-        get[x] === 1;
+        if(x == 2){
+            get[x] <== LessEqThan(252)([data[x], value[x]]);
+            get[x] === 1;
+
+        } else {
+            get[x] <== GreaterEqThan(252)([data[x], value[x]]);
+            get[x] === 1;
+        }
     }
     /* End of check 2 */
 

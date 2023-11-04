@@ -47,7 +47,6 @@ contract UnirepApp {
             unirep.attest(epochKey, targetEpoch, fieldIndices[x], vals[x]);
         }
     }
-
     function submitAttestation(
         uint256 epochKey,
         uint48 targetEpoch,
