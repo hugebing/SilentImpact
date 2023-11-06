@@ -196,10 +196,39 @@ export default observer(() => {
                             )
                                 .fill(0)
                                 .map((_, i) => {
+                                    var rowTable = 'aaa'
+                                    if(i==0){
+                                        rowTable = '購買的 donation 數量'
+                                    }
+                                    if(i==1){
+                                        rowTable = '接收的 donation 數量'
+                                    }
+                                    if(i==2){
+                                        rowTable = '已提領的 donation 數量'
+                                    }
+                                    if(i==3){
+                                        rowTable = '送出的 donation 數量'
+                                    }
+                                    if(i==4){
+                                        rowTable = '欲提領的 donation 數量'
+                                    }
+                                    if(i==5){
+                                        rowTable = '欲送出的 donation 數量'
+                                    }
+                                    if(i==6){
+                                        rowTable = '提交 tx 人的 Epoch Key'
+                                    }
+                                    if(i==7){
+                                        rowTable = '接收者的 Epoch Key'
+                                    }
+                                    if(i==8){
+                                        rowTable = '提領至... 地址'
+                                    }
+
                                     return (
                                         <div key={i} style={{ margin: '4px' }}>
                                             <p>
-                                                Data {i} ({fieldType(i)})
+                                                {rowTable} ({fieldType(i)})
                                             </p>
                                             <input
                                                 value={reqData[i] ?? ''}
