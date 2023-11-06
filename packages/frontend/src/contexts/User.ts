@@ -198,8 +198,8 @@ class User {
         var recipientAddress = reqData[8];
         // console.log(senderEpochKey);
         // console.log(recipientEpochKey);
-        console.log(`this.userState.chainId`)
-        console.log(this.userState.chainId)
+        // console.log(`this.userState.chainId`)
+        // console.log(this.userState.chainId)
         for (const key of Object.keys(reqData)) {
             if (reqData[+key] === '') {
                 delete reqData[+key]

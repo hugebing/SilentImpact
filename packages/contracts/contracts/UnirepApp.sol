@@ -4,7 +4,7 @@ import {Unirep} from '@unirep/contracts/Unirep.sol';
 import {IUnirep} from '@unirep/contracts/interfaces/IUnirep.sol';
 
 // Uncomment this line to use console.log
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 interface IVerifier {
     function verifyProof(
@@ -23,7 +23,7 @@ contract UnirepApp is IUnirep{
     uint256 public immutable withdrawAmountIndex = 4;
 
     receive() external payable {
-        
+
     }
 
     // Attester id == address
@@ -82,14 +82,14 @@ contract UnirepApp is IUnirep{
 
 
     function impactAttestation(
-        uint256 recipientEpochKey,
         uint256 senderEpochKey,
+        uint256 recipientEpochKey,
         uint48 targetEpoch,
         uint[6] calldata fieldIndices,
         uint[6] calldata vals,
         uint256[7] calldata publicSignals,
         uint256[8] calldata proof,
-        address recipient
+        address sender
     ) public {
 
         require(dataVerifier.verifyProof(
@@ -97,21 +97,25 @@ contract UnirepApp is IUnirep{
             proof
         ), 'Get error message');
         
+        console.log("a");
         for (uint8 x = 4; x < fieldIndices.length; x++) {
+            console.log("b x=%s", x);
             if (x == 4) {
+                console.log("c vals=%s", vals[x]);
                 unirep.attest(
                     senderEpochKey,
                     targetEpoch,
                     fieldIndices[2],
                     vals[x]
                 );
-
-            (bool success, ) = recipient.call{value: vals[x]}("");
+            console.log("d vals=%s", vals[x]);
+            (bool success, ) = sender.call{value: vals[x] * 1 ether}("");
             require(
                 success,
                 ": Unable to send value"
             );
             } else if (x == 5) {
+                console.log("e vals=%s", vals[x]);
                 unirep.attest(
                     senderEpochKey,
                     targetEpoch,

@@ -82,7 +82,7 @@ template DataProof(STATE_TREE_DEPTH, FIELD_COUNT, SUM_FIELD_COUNT, REPL_NONCE_BI
     temp <== GreaterEqThan(252)([owned, used]);
     temp === 1;
 
-    prepareToUse <== upper_bits[0] + upper_bits[1];
+    prepareToUse <== value[4] + value[5];
     haveDonation <== owned - used;
 
     log(haveDonation);

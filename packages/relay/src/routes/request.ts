@@ -8,7 +8,7 @@ import ABI from '@unirep-app/contracts/abi/UnirepApp.json'
 
 export default (app: Express, prover: Prover, synchronizer: Synchronizer) => {
     app.post('/api/request', async (req, res) => {
-        console.log(`z`)
+
         try {
             const { reqData, 
                 publicSignals, 
@@ -18,13 +18,13 @@ export default (app: Express, prover: Prover, synchronizer: Synchronizer) => {
                 recipientAddress,
                 ProvablePublicSignals,
                 ProvableProof} = req.body
-            console.log(`a`)
+
             const epochKeyProof = new EpochKeyProof(
                 publicSignals,
                 proof,
                 prover,
             )
-            console.log(`b`)
+
             const valid = await epochKeyProof.verify()
             if (!valid) {
                 res.status(400).json({ error: 'Invalid proof' })
@@ -32,7 +32,7 @@ export default (app: Express, prover: Prover, synchronizer: Synchronizer) => {
             }
             const epoch = await synchronizer.loadCurrentEpoch()
             const appContract = new ethers.Contract(APP_ADDRESS, ABI)
-            console.log(`c`)
+
             const keys = Object.keys(reqData)
             let calldata: any
 
@@ -61,26 +61,9 @@ export default (app: Express, prover: Prover, synchronizer: Synchronizer) => {
             console.log(`recipientAddress`)
             console.log(recipientAddress)
 
-            try{
 
-                calldata = appContract.interface.encodeFunctionData(
-                    'impactAttestation',
-                    [
-                        // senderEpochKey,
-                        // recipientEpochKey,
-                        epochKeyProof.epochKey,
-                        epochKeyProof.epochKey,
-                        epoch,
-                        keys,
-                        keys.map((k) => reqData[k]),
-                        ProvablePublicSignals,
-                        ProvableProof,
-                        recipientAddress
-                    ]
-                )
-            } catch (error) {
-                console.log(error)
-            }
+            console.log(BigInt(senderEpochKey))
+            console.log(BigInt(recipientEpochKey))
             
 
             if (keys.length === 1) {
@@ -92,10 +75,8 @@ export default (app: Express, prover: Prover, synchronizer: Synchronizer) => {
                 calldata = appContract.interface.encodeFunctionData(
                     'impactAttestation',
                     [
-                        // senderEpochKey,
-                        // recipientEpochKey,
-                        epochKeyProof.epochKey,
-                        epochKeyProof.epochKey,
+                        BigInt(senderEpochKey),
+                        BigInt(recipientEpochKey),
                         epoch,
                         keys,
                         keys.map((k) => reqData[k]),
@@ -105,12 +86,12 @@ export default (app: Express, prover: Prover, synchronizer: Synchronizer) => {
                     ]
                 )
             }
-            console.log(`d`)
+
             const hash = await TransactionManager.queueTransaction(
                 APP_ADDRESS,
                 calldata
             )
-            console.log(`e`)
+
             res.json({ hash })
         } catch (error: any) {
             res.status(500).json({ error })
