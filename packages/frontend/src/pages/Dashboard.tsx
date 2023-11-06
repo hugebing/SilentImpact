@@ -22,6 +22,17 @@ export default observer(() => {
     const [reqData, setReqData] = React.useState<{
         [key: number]: number | string
     }>({})
+
+    const [inputID, setInputID] = React.useState<
+        string
+    >()
+    const handleInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        await userContext.load(
+            event.target.value
+        )
+    };
+
+
     const [reqInfo, setReqInfo] = React.useState<ReqInfo>({ nonce: 0 })
     const [proveData, setProveData] = React.useState<{
         [key: number]: number | string
@@ -53,6 +64,7 @@ export default observer(() => {
         }, 1000)
     }, [])
 
+    
     if (!userContext.userState) {
         return <div className="container">Loading...</div>
     }
@@ -62,6 +74,20 @@ export default observer(() => {
             <h1>Dashboard</h1>
             <div className="container">
                 <div className="info-container">
+
+                    <div className="info-item">
+                        <div>
+                        <label htmlFor="userInput">User Input:</label>
+                        <input
+                            type="text"
+                            id="userInput"
+                            // value={inputID}
+                            onChange={handleInputChange}
+                            placeholder="Enter Epoch Key..."
+                        />
+                        </div>
+                    </div>
+
                     <div className="info-item">
                         <h3>Epoch</h3>
                         <Tooltip
@@ -166,7 +192,7 @@ export default observer(() => {
                             }}
                         >
                             {Array(
-                                userContext.userState.sync.settings.fieldCount
+                                userContext.userState.sync.settings.fieldCount+3
                             )
                                 .fill(0)
                                 .map((_, i) => {
@@ -178,12 +204,12 @@ export default observer(() => {
                                             <input
                                                 value={reqData[i] ?? ''}
                                                 onChange={(event) => {
-                                                    if (
-                                                        !/^\d*$/.test(
-                                                            event.target.value
-                                                        )
-                                                    )
-                                                        return
+                                                    // if (
+                                                    //     !/^\d*$/.test(
+                                                    //         event.target.value
+                                                    //     )
+                                                    // )
+                                                    //     return
                                                     setReqData(() => ({
                                                         ...reqData,
                                                         [i]: event.target.value,
@@ -248,7 +274,101 @@ export default observer(() => {
                             Attest
                         </Button>
                     </div>
+                    <div className="action-container">
+                        <div className="icon">
+                            <h2>Change Data</h2>
+                            <Tooltip text="You can request changes to data here. The demo attester will freely change your data." />
+                        </div>
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                justifyContent: 'flex-start',
+                            }}
+                        >
+                            {Array(
+                                userContext.userState.sync.settings.fieldCount+3
+                            )
+                                .fill(0)
+                                .map((_, i) => {
+                                    return (
+                                        <div key={i} style={{ margin: '4px' }}>
+                                            <p>
+                                                Data {i} ({fieldType(i)})
+                                            </p>
+                                            <input
+                                                value={reqData[i] ?? ''}
+                                                onChange={(event) => {
+                                                    // if (
+                                                    //     !/^\d*$/.test(
+                                                    //         event.target.value
+                                                    //     )
+                                                    // )
+                                                    //     return
+                                                    setReqData(() => ({
+                                                        ...reqData,
+                                                        [i]: event.target.value,
+                                                    }))
+                                                }}
+                                            />
+                                        </div>
+                                    )
+                                })}
+                        </div>
+                        <div className="icon">
+                            <p style={{ marginRight: '8px' }}>
+                                Epoch key nonce
+                            </p>
+                            <Tooltip text="Epoch keys are short lived identifiers for a user. They can be used to receive data and are valid only for 1 epoch." />
+                        </div>
+                        <select
+                            value={reqInfo.nonce ?? 0}
+                            onChange={(event) => {
+                                setReqInfo((v) => ({
+                                    ...v,
+                                    nonce: Number(event.target.value),
+                                }))
+                            }}
+                        >
+                            {Array(userContext.numEpochKeyNoncePerEpoch)
+                                .fill(null)
+                                .map((_, i) => {
+                                    return <option value={i}>{i}</option>
+                                })}
+                        </select>
+                        <p style={{ fontSize: '12px' }}>
+                            Requesting data with epoch key:
+                        </p>
+                        <p
+                            style={{
+                                maxWidth: '650px',
+                                wordBreak: 'break-all',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                            }}
+                        >
+                            {userContext.epochKey(reqInfo.nonce ?? 0)}
+                        </p>
 
+                        <Button
+                            onClick={async () => {
+                                if (
+                                    userContext.userState &&
+                                    userContext.userState.sync.calcCurrentEpoch() !==
+                                        (await userContext.userState.latestTransitionedEpoch())
+                                ) {
+                                    throw new Error('Needs transition')
+                                }
+                                await userContext.defaultRequestData(
+                                    reqData,
+                                    reqInfo.nonce ?? 0
+                                )
+                                setReqData({})
+                            }}
+                        >
+                            Attest
+                        </Button>
+                    </div>
                     <div className="action-container transition">
                         <div className="icon">
                             <h2>User State Transition</h2>

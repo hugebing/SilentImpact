@@ -117,21 +117,30 @@ export class TransactionManager {
             Object.assign(args, data)
         }
         if (!this.wallet) throw new Error('Not initialized')
+        console.log('TransactionManager.ts this.wallet.address')
+        console.log(`a`)
         if (!args.gasLimit) {
             // don't estimate, use this for unpredictable gas limit tx's
             // transactions may revert with this
-            const gasLimit = await this.wallet.provider.estimateGas({
-                to,
-                from: this.wallet.address,
-                ...args,
-            })
+
+            // TO BE FIX
+            // const gasLimit = await this.wallet.provider.estimateGas({
+            //     to,
+            //     from: this.wallet.address,
+            //     ...args,
+            // })
             Object.assign(args, {
-                gasLimit: gasLimit.add(50000),
+                // gasLimit: gasLimit.add(50000),
+                gasLimit: 8000000,
             })
         }
+        console.log(`b`)
         const nonce = await this.getNonce(this.wallet.address)
+        console.log(`c`)
         const gasPrice = await this.wallet.provider.getGasPrice()
+        console.log(`d`)
         const { chainId } = await this.wallet.provider.getNetwork()
+        console.log(`e`)
         const signedData = await this.wallet.signTransaction({
             nonce,
             to,
@@ -140,6 +149,7 @@ export class TransactionManager {
             // gasPrice: 299365979,
             ...args,
         })
+
         await this._db?.create('AccountTransaction', {
             address: this.wallet.address,
             signedData,

@@ -1,11 +1,13 @@
 import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
+// import "@nomiclabs/hardhat-etherscan";
 
 export default {
     defaultNetwork: 'local',
     networks: {
         hardhat: {
             blockGasLimit: 12000000,
+            chainId: 1337,
         },
         local: {
             url: 'http://127.0.0.1:8545',

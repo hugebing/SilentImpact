@@ -4,3 +4,9 @@
 
 # 產生 log
 node dataProof_main_js/generate_witness.js dataProof_main_js/dataProof_main.wasm input.json witness.wtns
+
+
+# TO BE FIX
+TransactionManager.ts 127
+recipient address 可以被 attester 任意修改
+attest 合約參數要改成 public signal

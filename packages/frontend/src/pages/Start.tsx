@@ -66,8 +66,22 @@ export default observer(() => {
                             >
                                 USER ADDED!
                             </p>
-                            <Link to="/dashboard">
-                                <Button>
+                            
+                            {/* <Link to="/dashboard"> */}
+                                <Button
+                                    onClick={async() => {
+                                        console.log(`sign up 1`)
+                                        await userContext.load('1')
+                                        await userContext.signup()
+                                        // await userContext.load('2')
+                                        // await userContext.signup()
+                                        // await userContext.load('3')
+                                        // await userContext.signup()
+                                        // await userContext.load('4')
+                                        // await userContext.signup()
+                                        window.location.href = '/dashboard';
+                                    }}
+                                >
                                     Dashboard
                                     <span style={{ marginLeft: '12px' }}>
                                         <img
@@ -76,7 +90,7 @@ export default observer(() => {
                                         />
                                     </span>
                                 </Button>
-                            </Link>
+                            {/* </Link> */}
                         </div>
                     )}
                 </div>

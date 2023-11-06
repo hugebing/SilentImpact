@@ -37,7 +37,7 @@ template DataProof(STATE_TREE_DEPTH, FIELD_COUNT, SUM_FIELD_COUNT, REPL_NONCE_BI
      /* 2. Check if user data more than given value */
     signal get[SUM_FIELD_COUNT];
     for (var x = 0; x < SUM_FIELD_COUNT; x++) {
-        if(x == 2){
+        if(x == 2 || x == 3){
             get[x] <== LessEqThan(252)([data[x], value[x]]);
             get[x] === 1;
 
@@ -53,8 +53,8 @@ template DataProof(STATE_TREE_DEPTH, FIELD_COUNT, SUM_FIELD_COUNT, REPL_NONCE_BI
     signal upper_bits[FIELD_COUNT - SUM_FIELD_COUNT];
     for (var x = 0; x < (FIELD_COUNT - SUM_FIELD_COUNT); x++) {
         (upper_bits[x], _) <== ExtractBits(REPL_NONCE_BITS, 253-REPL_NONCE_BITS)(data[SUM_FIELD_COUNT + x]);
-        equal_check[x] <== IsEqual()([upper_bits[x], value[SUM_FIELD_COUNT + x]]);
-        equal_check[x] === 1;
+        // equal_check[x] <== IsEqual()([upper_bits[x], value[SUM_FIELD_COUNT + x]]);
+        // equal_check[x] === 1;
     }
     // /* End of check 3 */
     
@@ -74,6 +74,7 @@ template DataProof(STATE_TREE_DEPTH, FIELD_COUNT, SUM_FIELD_COUNT, REPL_NONCE_BI
     signal haveDonation;
     signal temp;
     signal temp2;
+    signal temp3;
 
     owned <== value[0] + value[1];
     used <== value[2] + value[3];
@@ -81,13 +82,16 @@ template DataProof(STATE_TREE_DEPTH, FIELD_COUNT, SUM_FIELD_COUNT, REPL_NONCE_BI
     temp <== GreaterEqThan(252)([owned, used]);
     temp === 1;
 
-    prepareToUse <== value[SUM_FIELD_COUNT] + value[SUM_FIELD_COUNT + 1];
+    prepareToUse <== upper_bits[0] + upper_bits[1];
     haveDonation <== owned - used;
 
-    log(prepareToUse);
     log(haveDonation);
+    log(prepareToUse);
+    log(upper_bits[0]);
+    log(upper_bits[1]);
+    
     temp2 <== GreaterEqThan(252)([haveDonation, prepareToUse]);
-    temp2 === 1;
+    temp2 === 1; 
 
 
     // /* End of check 4 */
