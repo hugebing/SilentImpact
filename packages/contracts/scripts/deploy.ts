@@ -16,6 +16,7 @@ deployApp().catch((err) => {
 })
 
 export async function deployApp() {
+
     const [signer] = await ethers.getSigners()
     const unirep = await deployUnirep(signer)
 
@@ -25,7 +26,21 @@ export async function deployApp() {
     const App = await ethers.getContractFactory('UnirepApp')
     const app = await App.deploy(unirep.address, verifier.address, epochLength)
 
+    // await app.deployed()
+
     await app.deployed()
+    fs.writeFileSync(
+        ".unirepAddress",
+        unirep.address
+    );
+    fs.writeFileSync(
+        ".verifierAddress",
+        verifier.address
+    );
+    fs.writeFileSync(
+        ".appAddress",
+        app.address
+    );
 
     console.log(
         `Unirep app with epoch length ${epochLength} is deployed to ${app.address}`

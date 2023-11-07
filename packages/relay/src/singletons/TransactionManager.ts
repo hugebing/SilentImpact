@@ -134,13 +134,9 @@ export class TransactionManager {
                 gasLimit: 8000000,
             })
         }
-        console.log(`b`)
         const nonce = await this.getNonce(this.wallet.address)
-        console.log(`c`)
         const gasPrice = await this.wallet.provider.getGasPrice()
-        console.log(`d`)
         const { chainId } = await this.wallet.provider.getNetwork()
-        console.log(`e`)
         const signedData = await this.wallet.signTransaction({
             nonce,
             to,
@@ -155,6 +151,55 @@ export class TransactionManager {
             signedData,
             nonce,
         })
+        return ethers.utils.keccak256(signedData)
+    }
+
+    async queueBuyDonationTransaction(to: string, data: string | any = {}, amount: number) {
+        const args = {} as any
+        if (typeof data === 'string') {
+            // assume it's input data
+            args.data = data
+        } else {
+            Object.assign(args, data)
+        }
+        if (!this.wallet) throw new Error('Not initialized')
+        if (!args.gasLimit) {
+            // don't estimate, use this for unpredictable gas limit tx's
+            // transactions may revert with this
+
+            // TO BE FIX
+            // const gasLimit = await this.wallet.provider.estimateGas({
+            //     to,
+            //     from: this.wallet.address,
+            //     ...args,
+            // })
+            Object.assign(args, {
+                // gasLimit: gasLimit.add(50000),
+                gasLimit: 8000000,
+            })
+        }
+        const nonce = await this.getNonce(this.wallet.address)
+        const gasPrice = await this.wallet.provider.getGasPrice()
+        const { chainId } = await this.wallet.provider.getNetwork()
+        const value = ethers.utils.parseEther(amount.toString())
+        console.log('value')
+        console.log(value)
+        console.log('a');
+        const signedData = await this.wallet.signTransaction({
+            nonce,
+            to,
+            chainId,
+            gasPrice,
+            ...args,
+            value,
+        })
+        console.log('b');
+        await this._db?.create('AccountTransaction', {
+            address: this.wallet.address,
+            signedData,
+            nonce,
+        })
+        console.log('c');
         return ethers.utils.keccak256(signedData)
     }
 }

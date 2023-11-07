@@ -22,6 +22,7 @@ class User {
         this.load('0');
     }
 
+    
     async load(
         inputID : string
         ) {
@@ -194,8 +195,19 @@ class User {
         if (!this.userState) throw new Error('user state not initialized')
 
         var senderEpochKey = reqData[6];
+        if(reqData[6]==undefined){
+            senderEpochKey = reqData[7]
+        }
         var recipientEpochKey = reqData[7];
+        if(reqData[7]==undefined){
+            recipientEpochKey = reqData[6]
+        }
         var recipientAddress = reqData[8];
+        if(reqData[8]==undefined){
+            recipientAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+        }
+        
+        
         // console.log(senderEpochKey);
         // console.log(recipientEpochKey);
         // console.log(`this.userState.chainId`)
@@ -245,6 +257,46 @@ class User {
         await this.provider.waitForTransaction(data.hash)
         await this.userState.waitForSync()
         await this.loadData()
+    }
+
+    async buyDonation(
+        amount: number,
+    ) {
+        
+        if (!this.userState) throw new Error('user state not initialized')
+
+
+        // console.log(reqData);
+
+
+        // const epochKeyProof = await this.userState.genEpochKeyProof({
+        //     nonce: epkNonce,
+        // })
+
+        // const { publicSignals, proof } = await this.proveData2(reqData)
+        // var ProvablePublicSignals = publicSignals
+        // var ProvableProof = proof
+        // this.load('0');
+        const epoch = this.userState.sync.calcCurrentEpoch()
+        const key = this.userState.getEpochKeys(epoch, 0)
+        // console.log('key')
+        // console.log(key)
+        // console.log('key')
+        // console.log(key)
+        const data = await fetch(`${SERVER}/api/buyDonation`, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify(
+                stringifyBigInts({
+                    key, 
+                    amount,
+                })
+            ),
+        }).then((r) => r.json())
+        await this.provider.waitForTransaction(data.hash)
+        await this.userState.waitForSync()
     }
 
     async stateTransition() {

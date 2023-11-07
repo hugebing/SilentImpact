@@ -26,9 +26,21 @@ export default observer(() => {
     const [inputID, setInputID] = React.useState<
         string
     >()
+    const [amountOfBuyDonation, setBuyDonation] = React.useState<
+        string
+    >()
     const handleInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         await userContext.load(
             event.target.value
+        )
+    };
+
+    const buyDonationHandleInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        // await userContext.load(
+        //     '0'
+        // )
+        await userContext.buyDonation(
+            parseInt(event.target.value)
         )
     };
 
@@ -77,7 +89,7 @@ export default observer(() => {
 
                     <div className="info-item">
                         <div>
-                        <label htmlFor="userInput">User Input:</label>
+                        <label htmlFor="userInput">Epoch Key ID:</label>
                         <input
                             type="text"
                             id="userInput"
@@ -88,6 +100,24 @@ export default observer(() => {
                         </div>
                     </div>
 
+                    <div className="info-item2">
+                        <p style={{ fontSize: '14px' }}>
+                            欲購買的 donation 數量 (sum)
+                        </p>
+                        <input
+                            type="text"
+                            value={amountOfBuyDonation}
+                            onChange={(e) => setBuyDonation(e.target.value)}
+                            // placeholder="Enter text..."
+                        />
+                        <button onClick={async () => {
+                            
+                                userContext.buyDonation(
+                                    parseInt(amountOfBuyDonation ?? '')
+                                )
+                            }}
+                        >購買</button>
+                    </div>
                     <div className="info-item">
                         <h3>Epoch</h3>
                         <Tooltip
@@ -118,10 +148,38 @@ export default observer(() => {
                         <Tooltip text="This is all the data the user has received. The user cannot prove data from the current epoch." />
                     </div>
                     {userContext.data.map((data, i) => {
+                        var rowTable = ' '
+                        if(i==0){
+                            rowTable = '購買的 donation 數量'
+                        }
+                        if(i==1){
+                            rowTable = '接收的 donation 數量'
+                        }
+                        if(i==2){
+                            rowTable = '已提領的 donation 數量'
+                        }
+                        if(i==3){
+                            rowTable = '送出的 donation 數量'
+                        }
+                        if(i==4){
+                            rowTable = '欲提領的 donation 數量'
+                        }
+                        if(i==5){
+                            rowTable = '欲送出的 donation 數量'
+                        }
+                        if(i==6){
+                            rowTable = '提交 tx 人的 Epoch Key'
+                        }
+                        if(i==7){
+                            rowTable = '接收者的 Epoch Key'
+                        }
+                        if(i==8){
+                            rowTable = '提領至... 地址'
+                        }
                         if (i < userContext.sumFieldCount) {
                             return (
                                 <div key={i} className="info-item">
-                                    <div>Data {i}</div>
+                                    <div>{rowTable}</div>
                                     <div className="stat">
                                         {(data || 0).toString()}
                                     </div>
@@ -130,7 +188,7 @@ export default observer(() => {
                         } else {
                             return (
                                 <div key={i} className="info-item">
-                                    <div>Data {i}</div>
+                                    <div>{rowTable}</div>
                                     <div className="stat">
                                         {(
                                             data >>
@@ -151,10 +209,38 @@ export default observer(() => {
                         <Tooltip text="This is the data the user has received up until their last transitioned epoch. This data can be proven in ZK." />
                     </div>
                     {userContext.provableData.map((data, i) => {
+                        var rowTable = ' '
+                        if(i==0){
+                            rowTable = '購買的 donation 數量'
+                        }
+                        if(i==1){
+                            rowTable = '接收的 donation 數量'
+                        }
+                        if(i==2){
+                            rowTable = '已提領的 donation 數量'
+                        }
+                        if(i==3){
+                            rowTable = '送出的 donation 數量'
+                        }
+                        if(i==4){
+                            rowTable = '欲提領的 donation 數量'
+                        }
+                        if(i==5){
+                            rowTable = '欲送出的 donation 數量'
+                        }
+                        if(i==6){
+                            rowTable = '提交 tx 人的 Epoch Key'
+                        }
+                        if(i==7){
+                            rowTable = '接收者的 Epoch Key'
+                        }
+                        if(i==8){
+                            rowTable = '提領至... 地址'
+                        }
                         if (i < userContext.sumFieldCount) {
                             return (
                                 <div key={i} className="info-item">
-                                    <div>Data {i}</div>
+                                    <div>{rowTable}</div>
                                     <div className="stat">
                                         {(data || 0).toString()}
                                     </div>
@@ -163,7 +249,7 @@ export default observer(() => {
                         } else {
                             return (
                                 <div key={i} className="info-item">
-                                    <div>Data {i}</div>
+                                    <div>{rowTable}</div>
                                     <div className="stat">
                                         {(
                                             data >>
@@ -183,7 +269,7 @@ export default observer(() => {
                         <div className="icon">
                             <h2>Change Data</h2>
                             <Tooltip text="You can request changes to data here. The demo attester will freely change your data." />
-                        </div>
+                        </div>             
                         <div
                             style={{
                                 display: 'flex',
@@ -196,7 +282,7 @@ export default observer(() => {
                             )
                                 .fill(0)
                                 .map((_, i) => {
-                                    var rowTable = 'aaa'
+                                    var rowTable = ' '
                                     if(i==0){
                                         rowTable = '購買的 donation 數量'
                                     }
@@ -303,7 +389,7 @@ export default observer(() => {
                             Attest
                         </Button>
                     </div>
-                    <div className="action-container">
+                    {/* <div className="action-container">
                         <div className="icon">
                             <h2>Change Data</h2>
                             <Tooltip text="You can request changes to data here. The demo attester will freely change your data." />
@@ -397,7 +483,8 @@ export default observer(() => {
                         >
                             Attest
                         </Button>
-                    </div>
+                    </div> */}
+
                     <div className="action-container transition">
                         <div className="icon">
                             <h2>User State Transition</h2>
@@ -418,10 +505,38 @@ export default observer(() => {
                         {Array(userContext.userState.sync.settings.fieldCount)
                             .fill(0)
                             .map((_, i) => {
+                                var rowTable = ' '
+                                if(i==0){
+                                    rowTable = '購買的 donation 數量'
+                                }
+                                if(i==1){
+                                    rowTable = '接收的 donation 數量'
+                                }
+                                if(i==2){
+                                    rowTable = '已提領的 donation 數量'
+                                }
+                                if(i==3){
+                                    rowTable = '送出的 donation 數量'
+                                }
+                                if(i==4){
+                                    rowTable = '欲提領的 donation 數量'
+                                }
+                                if(i==5){
+                                    rowTable = '欲送出的 donation 數量'
+                                }
+                                if(i==6){
+                                    rowTable = '提交 tx 人的 Epoch Key'
+                                }
+                                if(i==7){
+                                    rowTable = '接收者的 Epoch Key'
+                                }
+                                if(i==8){
+                                    rowTable = '提領至... 地址'
+                                }
                                 return (
                                     <div key={i} style={{ margin: '4px' }}>
                                         <p>
-                                            Data {i} ({fieldType(i)})
+                                            {rowTable} ({fieldType(i)})
                                         </p>
                                         <input
                                             value={proveData[i] ?? '0'}

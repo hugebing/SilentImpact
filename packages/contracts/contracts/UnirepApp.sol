@@ -138,8 +138,8 @@ contract UnirepApp is IUnirep{
         uint48 targetEpoch
         ) payable public {
         
-        require(msg.value == amount, ":Send wrong ETH value");
-        (bool success, ) = msg.sender.call{value: amount}("");
+        require(msg.value == amount * 1 ether, ":Send wrong ETH value");
+        (bool success, ) = msg.sender.call{value: amount * 1 ether}("");
         require(
             success,
             ": Unable to send value, recipient may have reverted"

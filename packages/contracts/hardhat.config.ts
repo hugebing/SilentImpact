@@ -1,13 +1,15 @@
 import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
-// import "@nomiclabs/hardhat-etherscan";
+import { task } from 'hardhat/config'
+import * as fs from 'fs'
+
+
 
 export default {
     defaultNetwork: 'local',
     networks: {
         hardhat: {
             blockGasLimit: 12000000,
-            chainId: 1337,
         },
         local: {
             url: 'http://127.0.0.1:8545',
@@ -34,3 +36,18 @@ export default {
         ],
     },
 }
+
+task("buyDonation", "Buy donation")
+  .addParam("epochkey", "The epochKey")
+  .addParam("amount", "ETH amount")
+  .addParam("targetepoch", "The targetEpoch")
+  .setAction(async (taskArgs, hre) => {
+    const App = await hre.ethers.getContractFactory('UnirepApp')
+    const appAddress = fs.readFileSync(".appAddress").toString();
+    const amountWei = hre.ethers.utils.parseUnits(taskArgs.amount);
+    console.log("appAddres: " + appAddress);
+    const app = await App.attach(appAddress);
+    const tx = await app.buyDonation(taskArgs.epochkey, taskArgs.amount, taskArgs.targetepoch,{ value: amountWei });
+    await tx.wait(1);
+    console.log("epochkey: " + taskArgs.epochkey);
+  });
