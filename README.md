@@ -1,4 +1,4 @@
-# create-unirep-app .
+# create-unirep-app 
 
 This is a demo app of a [unirep](https://github.com/Unirep/Unirep) attester. In this demo app, users can request data from the example attester. After transition, user can prove how much data he has.
 
